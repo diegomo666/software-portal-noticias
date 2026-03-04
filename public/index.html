@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portal de Noticias</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 0; line-height: 1.4; }
+      main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+      section { margin-bottom: 24px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+      .card { border: 1px solid #ddd; border-radius: 8px; padding: 12px; }
+      img { width: 100%; height: 160px; object-fit: cover; border-radius: 6px; }
+      footer { border-top: 1px solid #ddd; padding: 12px 16px; text-align: center; }
+      .loading { color: #555; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+      const { useEffect, useState } = React;
+
+      function App() {
+        const [data, setData] = useState({
+          noticias: [],
+          imagenTexto: [],
+          texto: [],
+          imagenes: [],
+        });
+        const [loading, setLoading] = useState(true);
+
+        useEffect(() => {
+          async function loadData() {
+            try {
+              const [noticias, imagenTexto, texto, imagenes] = await Promise.all([
+                fetch('/api/noticias').then((r) => r.json()),
+                fetch('/api/seccion-imagen-texto').then((r) => r.json()),
+                fetch('/api/seccion-texto').then((r) => r.json()),
+                fetch('/api/seccion-imagenes').then((r) => r.json()),
+              ]);
+              setData({ noticias, imagenTexto, texto, imagenes });
+            } catch (error) {
+              console.error('Error cargando contenido', error);
+            } finally {
+              setLoading(false);
+            }
+          }
+
+          loadData();
+        }, []);
+
+        return (
+          <>
+            <main>
+              <h1>Portal de Noticias</h1>
+              {loading && <p className="loading">Cargando contenido...</p>}
+
+              <section>
+                <h2>Sección de Noticias</h2>
+                <div className="grid">
+                  {data.noticias.map((item) => (
+                    <article key={item.id} className="card">
+                      <h3>{item.titulo}</h3>
+                      <p>{item.resumen}</p>
+                      <small>{item.fecha}</small>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section>
+                <h2>Sección de Imagen y Texto</h2>
+                <div className="grid">
+                  {data.imagenTexto.map((item) => (
+                    <article key={item.id} className="card">
+                      <img src={item.imagen} alt={item.titulo} />
+                      <h3>{item.titulo}</h3>
+                      <p>{item.texto}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section>
+                <h2>Sección Solo Texto</h2>
+                <div className="grid">
+                  {data.texto.map((item) => (
+                    <article key={item.id} className="card">
+                      <h3>{item.titulo}</h3>
+                      <p>{item.texto}</p>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section>
+                <h2>Sección Solo Imágenes</h2>
+                <div className="grid">
+                  {data.imagenes.map((item) => (
+                    <article key={item.id} className="card">
+                      <img src={item.imagen} alt={item.alt} />
+                    </article>
+                  ))}
+                </div>
+              </section>
+            </main>
+
+            <footer>
+              <small>© 2026 Portal de Noticias — Demo inicial con React + Node.js + Flat CMS</small>
+            </footer>
+          </>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+  </body>
+</html>
