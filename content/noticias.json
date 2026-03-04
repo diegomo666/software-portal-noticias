@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1,
+    "titulo": "Nueva iniciativa de reciclaje en la ciudad",
+    "resumen": "El municipio lanzó un programa para mejorar la separación de residuos en hogares.",
+    "fecha": "2026-03-01"
+  },
+  {
+    "id": 2,
+    "titulo": "Avances en energía solar comunitaria",
+    "resumen": "Se instalaron paneles solares en tres barrios con impacto positivo en costos.",
+    "fecha": "2026-02-28"
+  },
+  {
+    "id": 3,
+    "titulo": "Feria tecnológica abre sus puertas",
+    "resumen": "Empresas locales presentan soluciones innovadoras para educación y salud.",
+    "fecha": "2026-02-26"
+  }
+]
